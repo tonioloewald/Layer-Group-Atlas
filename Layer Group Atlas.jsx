@@ -114,7 +114,7 @@ function documentMetadata( doc ){
 function layerMetadata( doc, layer_idx ){
     var layer = doc.layers[layer_idx],
         name_parts = layer.name.split('.'),
-        pin = name_parts.length > 1 ? name_parts[1].split(",") : false,
+        pin = false,
         layer_data = {
             name: name_parts[0],
             left: coord(layer.bounds[0]),
@@ -125,8 +125,10 @@ function layerMetadata( doc, layer_idx ){
             pinY: 0.5, // center by default
             layer_index: layer_idx
         };
-    if( pin ){
-        if(pin.length){
+    if( name_parts.length > 1 ){
+        name_parts.shift();
+        pin = name_parts.join(".").split(",");
+        if(pin.length == 2){
             layer_data.pinX = parseFloat(pin[0]);
             layer_data.pinY = parseFloat(pin[1]);
         }
@@ -180,8 +182,6 @@ function buildAtlas( metadata ){
     // create our initial atlas
     atlas = new NETXUS.RectanglePacker( w, h );
     
-    alert( "initial size: " + w + " x " + h );
-    
     while( !done ){
         atlas.reset(w, h);
         done = true;
@@ -198,7 +198,6 @@ function buildAtlas( metadata ){
                     h *= 2;
                 }
                 
-                alert( "growing to size: " + w + " x " + h );
                 done = false;
                 break;
             }
@@ -206,7 +205,6 @@ function buildAtlas( metadata ){
     }
     
     used = atlas.getDimensions();
-    alert( "final size: " + used.w + " x " + used.h );
     
     metadata.atlas = { width: w, height: h };
 }
