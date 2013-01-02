@@ -169,11 +169,15 @@ function buildAtlas( metadata ){
     
     // find minimum w and h such that every individual layer will fit
     for( var i = 0; i < layers.length; i++ ){
-        if( layers[i].width + 2 > w ){
-            w = layers[i].width + safetyMargin * 2;
+        var layer = layers[i];
+        if( layer.name[0] === "_" ){
+            continue;
         }
-        if( layers[i].height + 2 > h ){
-            h = layers[i].height + safetyMargin * 2;
+        if( layer.width + 2 > w ){
+            w = layer.width + safetyMargin * 2;
+        }
+        if( layer.height + 2 > h ){
+            h = layer.height + safetyMargin * 2;
         }
     }
     w = Math.pow( 2, Math.floor( Math.log(w) / Math.log(2) + 1 ) );
@@ -186,11 +190,17 @@ function buildAtlas( metadata ){
         atlas.reset(w, h);
         done = true;
         for( var i = 0; i < layers.length; i++ ){
+            var layer = layers[i];
+            
+            // do not render underscored files
+            if( layer.name[0] === "_" ){
+                continue;
+            }
             var packedOrigin = atlas.findCoords( layers[i].width + 2, layers[i].height + 2 );
             if( packedOrigin !== null ){
                 packedOrigin.x += 1;
                 packedOrigin.y += 1;
-                layers[i].packedOrigin = packedOrigin;
+                layer.packedOrigin = packedOrigin;
             } else {
                 if( w < h ){
                     w *= 2;
@@ -227,6 +237,10 @@ function renderAtlas( docRef, metadata ){
         var layer = layers[i],
             source = docRef.layers[layer.layer_index];
         
+        // do not render underscored files
+        if( layer.name[0] === "_" ){
+            continue;
+        }
         app.activeDocument = docRef;    
         source.visible = true;
         var region = [
@@ -370,9 +384,6 @@ function processLayers(){
 		switch( docRef.layers[i].name.substr(0,1) ){
 			case ".":
 				// ignore
-				break;
-			case "_":
-				metadata.layers.push( layerMetadata( docRef, i ) );
 				break;
 			default:
 				metadata.layers.push( layerMetadata( docRef, i ) );
