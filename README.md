@@ -98,5 +98,5 @@ Customization
 It should be fairly easy to modify the script to deal with specialized groupings -- e.g. 
 one group per control, one sub-group be control state.) Similarly, you could eliminate
 the "pick a destination folder" step pretty easily. This is a workflow tool -- the 
-goal is to turn a layout into an image map as seamless as possible.
+goal is to turn a layout into an image map as seamlessly as possible.
 
