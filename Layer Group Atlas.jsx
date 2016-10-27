@@ -365,6 +365,11 @@ function saveFile( path, content ){
 }
 
 function processLayers(){
+    
+    // set to pixels, storing original ruler setting so we can return to it
+    startRulerUnits = app.preferences.rulerUnits
+    app.preferences.rulerUnits = Units.PIXELS
+
 	var docRef = app.activeDocument;
 	
 	// store the layer visibility going in so we can return to it
@@ -403,5 +408,8 @@ function processLayers(){
 		docRef.layers[i].visible = origVis[i];
 	}
 	
-	docRef = null;
+	docRef = null;    
+
+    // restore ruler settings
+    app.preferences.rulerUnits = startRulerUnits
 }
